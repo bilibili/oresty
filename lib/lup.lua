@@ -7,6 +7,9 @@ local lfs = require 'lfs'
 local serpent = require 'serpent'
 local cjson = require 'cjson.safe'
 
+--
+-- constants
+--
 local _M = {
     PATHINFO_DIRNAME = 1,
     PATHINFO_BASENAME = 2,
@@ -20,13 +23,55 @@ local _M = {
     PHP_URL_PATH = 5,
     PHP_URL_QUERY = 6,
     PHP_URL_FRAGMENT = 7,
+    FILE_APPEND = 'a+',
 }
 
 function _M.var_dump(expression)
     print(serpent.block(expression))
 end
+function _M.shuffle(t)
+    math.randomseed(os.clock())
+    local tmp, index
+    for i=1, #t-1 do
+        index = math.random(i, #t)
+        if i ~= index then
+            tmp = t[index]
+            t[index] = t[i]
+            t[i] = tmp
+        end
+    end
+end
 
-function _M.scandir()
+function _M.in_array(needle , haystack)
+    if haystack then
+        for _, v in pairs(haystack) do
+            if v == needle then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+function _M.array_merge(array1, array2)
+    array1 = array1 or {}
+    array2 = array2 or {}
+    local res = {}
+    for k, v in pairs(array1) do 
+        res[k] = v 
+    end
+    for k, v in pairs(array2) do
+        if type(v) == 'table' and type(res[k]) == 'table' then
+            res[k] = _M.array_merge(res[k], array2[k])
+        else
+            if type(k) == 'number' then
+                table.insert(res, v)
+            else
+                res[k] = v
+            end
+        end
+    end
+    return res
 end
 
 --
@@ -69,7 +114,7 @@ end
 
 function _M.hex2bin(data)
     return ((data or ''):gsub('..', function (cc)
-        return string.char(tonumber(cc, 16))
+        return string.char(tonumber(cc, 16) or 0)
     end))
 end
 
@@ -106,12 +151,10 @@ function _M.exec(cmd)
 end
 
 function _M.unlink(path)
-    --return os.remove(path)
-    return _M.exec('rm -f '..path)
+    return os.remove(path)
 end
 
 function _M.rename(src, dst)
-    -- return os.rename(src, dst)
     return _M.exec('mv '..src..' '..dst)
 end
 
@@ -125,8 +168,8 @@ function _M.file_get_contents(file)
     return content
 end
 
-function _M.file_put_contents(file, content)
-    local f, err = io.open(file, 'w')
+function _M.file_put_contents(file, content, flag)
+    local f, err = io.open(file, flag or 'w')
     if not f then
         return nil, err
     end
@@ -156,11 +199,32 @@ end
 -- http://php.net/manual/en/function.parse-url.php
 --
 function _M.parse_url(url, component)
-    component = component or -1
-    return {
-        host = string.gsub(url, "^.*://(%w+)(/.+)$", "%1"), 
-        path = string.gsub(url, "^.*://(%w+)(/.+)$", "%2")
+
+    local m, err = ngx.re.match(url, [[^(?:(\w+):)?//([^:/\?]+)(?::(\d+))?([^\?]*)\??(.*)]], "jo")
+
+    if not m then
+        return nil, "BAD_URL_" .. url .. ", ERR_" .. (err or '')
+    end
+
+    local p = {
+        [_M.PHP_URL_SCHEME] = m[1] or 'http',
+        [_M.PHP_URL_HOST] = m[2],
+        [_M.PHP_URL_PORT] = tonumber(m[3]),
+        [_M.PHP_URL_PATH] = m[4] or '/',
+        [_M.PHP_URL_QUERY] = m[5],
     }
+
+    if component then
+        return p[component]
+    end
+    return {
+        scheme = p[_M.PHP_URL_SCHEME],
+        host = p[_M.PHP_URL_HOST],
+        port = p[_M.PHP_URL_PORT],
+        path = p[_M.PHP_URL_PATH],
+        query = p[_M.PHP_URL_QUERY],
+    }
+
 end
 
 function _M.is_executable(path)
@@ -184,6 +248,14 @@ function _M.file_exists(path)
     end
     io.close(f)
     return true
+end
+
+function _M.filemtime(path)
+    local attributes = lfs.attributes(path)
+    if attributes then
+        return attributes.change
+    end
+    return false 
 end
 
 function _M.filesize(path)
@@ -228,14 +300,6 @@ function _M.pathinfo(path, options)
     }
 end
 
--- function _M.pathinfo(path, options)
---     if options == _M.PATHINFO_EXTENSION then
---         return string.gsub(path, "^(.*)%.(.*)$", "%2")
---     elseif options == _M.PATHINFO_FILENAME then
---         return string.gsub(path, "^(.*)%.(.*)$", "%1")
---     end
--- end
-
 function _M.dirname(path)
     local dirname, count = path:gsub("[^/]+/*$", "")
     if dirname == "" then
@@ -250,23 +314,12 @@ function _M.mkdir(path, mode, recursive)
     end
     local parent = _M.dirname(path)
     if not lfs.attributes(parent) then
-        if not recursive then
-            return nil, 'mkdir(): No such file or directory'
-        end
-        local ret, err = _M.mkdir(parent, mode, recursive)
-        if not ret then
-            return err
-        end
+        assert(recursive, 'mkdir(): No such file or directory')
+        _M.mkdir(parent, mode, recursive)
     end
-    local ret, err = lfs.mkdir(path)
-    if not ret then
-        return nil, err
-    end
+    assert(lfs.mkdir(path))
     if mode then
-        local ret, err = os.execute("chmod "..mode.." "..path)
-        if not ret then
-            return nil, err
-        end
+        os.execute("chmod "..mode.." "..path)
     end
     return true
 end
@@ -294,18 +347,6 @@ function _M.rand()
     math.randomseed((os.time()%100000000)*1000000+os.clock()*1000000)
     return math.random()*100000000000000
 end
-
--- char arg[128] = "";
--- char ret[128] = "";
--- strcpy(arg, luaL_checkstring(L, 1));
--- statfs(arg, &st);
--- long long size = (st.f_blocks * st.f_bsize) / 1024;
--- long long used = ((st.f_blocks - st.f_bfree) * st.f_bsize) / 1024;
--- long long avail = (st.f_bavail * st.f_bsize) / 1024;
--- long long percent = (used) / (float)(used + avail) * 100;
--- sprintf(ret, "%-20s %ld %ld %ld %ld", arg, size, used, avail, percent);
--- lua_pushstring(L, ret);
-
 
 function _M.disk_free_space(path)
     return tonumber(_M.explode('\n', _M.exec('df --output=avail '..path))[2])

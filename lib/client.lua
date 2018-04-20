@@ -10,6 +10,16 @@ local _M = {
     version = 171130
 }
 
+_M = setmetatable({version = 171130}, {
+    __index = function(_, method)
+        return setmetatable({}, {
+            __call = function(_, ...)
+                return _M.request(method, ...)
+            end
+        })
+    end
+})
+
 local function get_curl(method, arg_url, args)
     local cmds = {}
     local query = ''
@@ -54,7 +64,6 @@ function _M.request(method, url, args)
             query = '?'..ngx.encode_args(v);
         elseif k == 'body' then
             body = args.body
-            headers['Content-Type'] = 'text/plain'
         elseif k == 'json' then
             body = cjson.encode(args.json)
             headers['Content-Type'] = 'application/json'
@@ -71,6 +80,16 @@ function _M.request(method, url, args)
     local res, err
     local httpc = http.new()
     httpc:set_timeout(args.timeout or 200)
+
+    --
+    -- proxy需要lua-resty-http-0.12支持
+    --
+    if args.proxy then
+        httpc:set_proxy_options{
+            http_proxy = args.proxy
+        }
+    end
+
     local retry = args.retry or 10
     while retry > 0 do
         res, err = httpc:request_uri(url..query, {
@@ -79,7 +98,7 @@ function _M.request(method, url, args)
             headers = headers
         })
         httpc:close()
-        ngx.log(ngx.ERR, '>>>\n\nHTTPCERR_'..(err or 'OK')..'_RETRY_'..retry..' | '..get_curl(method, url, args)..'\n\n<<<')
+        ngx.log(ngx.ERR, 'HTTPCERR_'..(err or 'OK')..'_RETRY_'..retry..' '..get_curl(method, url, args))
         retry = retry - 1
         if res or retry == 0 then
             break
@@ -89,7 +108,7 @@ function _M.request(method, url, args)
     if res and ({[301]=1,[302]=1,[200]=1,[204]=1,[206]=1})[res.status] then
         return res
     end
-    error(cjson.encode{
+    error({
         err = err,
         body = res and res.body,
         status = res and res.status

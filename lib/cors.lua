@@ -7,6 +7,33 @@ local _M = {
     version = 190924
 }
 
+--[[
+params = {
+    cors = {
+        {
+            origins = {
+                'http://*.bilibili.co',
+                'https://*.bilibili.co',
+                'http://*.bilibili.com',
+                'https://*.bilibili.com',
+            },
+            methods = {
+                'DELETE', 
+                'PUT',
+            },
+            headers = {
+                'Content-Type', 
+                'X-Upos-Auth',
+                'Range',
+            },
+            expose_headers = {
+            },
+            max_age_seconds = 1800,
+        }
+    }
+}
+]]
+
 function _M.apply(params)
 
     local origin = ngx.var.http_origin
@@ -29,7 +56,6 @@ function _M.apply(params)
                             ngx.header["Access-Control-Expose-Headers"] = table.concat(cors.expose_headers, ", ")
                         end
                         ngx.header["Access-Control-Allow-Credentials"] = "true"
-                        ngx.exit(200)
                     else
                         ngx.header["Access-Control-Allow-Credentials"] = "true"
                         break

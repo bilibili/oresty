@@ -18,13 +18,8 @@
 
 PREFIX=_PREFIX_
 
-test -f $@ && {
-    /usr/local/oresty/bin/resty $@
-    exit
-}
-
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-DESC="oresty Daemon"
+DESC="$(basename $0) Daemon"
 DAEMON=/usr/local/oresty/nginx/sbin/nginx
 CONF=$PREFIX/conf/nginx.conf
 PID=$PREFIX/logs/nginx.pid
