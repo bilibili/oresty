@@ -23,7 +23,7 @@ function _M.apply(route, method, params)
         ngx.header.content_type = 'application/json'
         return cjson.encode(ret)
     elseif type(ret) == 'string' then
-        ngx.header.content_type = 'text/plain'
+        ngx.header.content_type = 'text/html'
         return ret
     else
         error('UNKNOWN_RET_CONTENT_TYPE')

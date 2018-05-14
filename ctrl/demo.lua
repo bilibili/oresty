@@ -6,7 +6,7 @@ local _M = {}
 
 function _M.get(params)
 
-    local ret = client.get('http://baidu.com')
+    local ret = client.get('http://example.com')
 
     local body = ret.body
 
@@ -14,7 +14,7 @@ function _M.get(params)
         message = 'Hello, World!'
     })
 
-    return params
+    return ''
 end
 
 return _M
