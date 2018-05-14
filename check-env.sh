@@ -55,6 +55,6 @@ diff /tmp/check-oresty <(declare -f check-oresty) ||
 cp -r ./lualib/ /usr/local/oresty/site/
 
 name=${1:-oresty}
-sed "s@_PREFIX_@$PWD/nginx@;s@_NAME_@$name@" oresty.template > $name
+sed "s@_APP_DIR_@$PWD@;s@_NAME_@$name@" oresty.template > $name
 
 echo OK

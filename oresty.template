@@ -16,7 +16,9 @@
 ### END INIT INFO
 #
 
-PREFIX=_PREFIX_
+cd _APP_DIR_
+
+PREFIX=$PWD/nginx
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 DESC="$(basename $0) Daemon"
