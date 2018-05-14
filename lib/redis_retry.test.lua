@@ -1,8 +1,7 @@
-local redis = require 'lib.redis_retry'
-local lup = require 'lib.lup'
+local serpent = require 'serpent'
+local redis_retry = require 'lib.redis_retry'
 
-redis.set('ni', 'hao')
+local red = redis_retry.new('127.0.0.1', 6379, 3)
 
-assert('hao' == redis.get('ni'))
-
-print('PASS')
+print(red:set('ni', 'hao'))
+print(red:get('ni'))
