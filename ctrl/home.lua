@@ -6,9 +6,9 @@ local _M = {}
 
 function _M.get(params)
 
-    local ret = client.get('http://example.com')
+    -- local ret = client.get('http://example.com')
 
-    local body = ret.body
+    -- local body = ret.body
 
     template.render('view.html', {
         message = 'Hello, World!'
