@@ -1,0 +1,47 @@
+{% layout = "layout.html" %}
+
+<h1> api </h1>
+
+<a target=_blank href='?r=api&key=a&val={{time}}'>redis set a = {{time}}</a>
+<br>
+<a target=_blank href='?r=api&key=a'>redis get a</a>
+
+<h1> 模板传值 </h1>
+
+message = {{ message }}
+
+<h1> 读取配置 </h1>
+
+redis_host = {{ redis_host }}
+
+<h1> 列表 </h1>
+
+<ul>
+{% for i in pairs(arr) do %}
+    <li>{{i}} - {{arr[i]}}</li>
+{% end %}
+</ul>
+
+<h1> pre标签 </h1>
+<pre>
+total 2.4M
+drwxr-xr-x 10 tjx  tjx  4.0K Jun 26 21:46 .
+drwxr-xr-x 41 tjx  tjx  4.0K Jun 26 10:07 ..
+-rwxr-xr-x  1 tjx  tjx   204 Jun 26 14:30 check-env.sh
+lrwxrwxrwx  1 tjx  tjx    11 Apr 18 21:06 config -> config_dev/
+drwxr-xr-x  2 tjx  tjx    23 May 14 12:24 config_dev
+drwxr-xr-x  2 tjx  tjx    35 Jun 26 19:02 ctrl
+-rw-r--r--  1 tjx  tjx  1.8K Jun 26 10:51 gendeb-oresty.sh
+drwxr-xr-x  8 tjx  tjx  4.0K Jun 26 19:12 .git
+-rw-r--r--  1 tjx  tjx     8 Jun 26 19:12 .gitignore
+drwxr-xr-x  2 tjx  tjx  4.0K Jun 26 21:40 lib
+drwxr-xr-x  3 tjx  tjx   141 May 10 09:36 lualib
+drwxr-xr-x  4 tjx  tjx    28 Apr 18 21:35 nginx
+-rw-r--r--  1 root root 3.3K May 14 15:50 oresty
+-rw-r--r--  1 tjx  tjx  2.3M Jun 26 14:30 oresty_1.13.6.2-20180626105705_amd64.deb
+-rwxr-xr-x  1 tjx  tjx  3.3K May 14 15:49 oresty.template
+-rw-r--r--  1 tjx  tjx   501 Jun 26 21:46 README.md
+-rw-r--r--  1 tjx  tjx  1.4K Jun 26 21:40 site.conf
+drwxr-xr-x  2 tjx  tjx     6 Apr 18 21:17 static
+drwxr-xr-x  2 tjx  tjx    40 Jun 26 22:03 template
+</pre>
