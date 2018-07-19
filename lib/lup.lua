@@ -83,7 +83,7 @@ function _M.a(f, ...)
     if status then
         return ret
     end
-    ngx.log(ngx.ERR, ret)
+    ngx.log(ngx.ERR, serpent.line(ret))
     return nil
 end
 
