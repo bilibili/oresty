@@ -16,7 +16,7 @@
 ### END INIT INFO
 #
 
-cd /home/ubuntu/oresty
+cd /data/app/oresty
 
 PREFIX=$PWD/nginx
 
