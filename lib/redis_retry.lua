@@ -16,7 +16,7 @@ function _M.new(host, port, max_retry)
                     local ret, err
                     local red = redis.new()
                     repeat
-                        ret = red:connect(host, port)
+                        ret = red:connect(host or '127.0.0.1', port or 6379)
                         if ret then
                             ret, err = red[_.method](red, ...)
                             if ret then
