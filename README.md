@@ -22,6 +22,9 @@ oresty
 
     ps aux|grep oresty
 
+    iresty/lua-resty-etcd: Nonblocking Lua etcd driver library for OpenResty
+    https://github.com/iresty/lua-resty-etcd
+
 - swoole.lua
 
     用lua实现swoole，task-workers和request-workers隔离
@@ -34,3 +37,11 @@ oresty
 
 接口和PHP开源项目Guzzle完全一致
     http://docs.guzzlephp.org/
+
+## Changelist
+
+### 20190915 
+- 升级OpenResty到1.15
+- 升级route.lua
+- 升级redis_client.lua
+- 新增lua-resty-etcd

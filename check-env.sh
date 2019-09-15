@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-dpkg -i ./oresty_1.13.6.2-20180626105705_amd64.deb
+dpkg -i ./oresty_1.15.8.1-20190915154915_amd64.deb
 
 mkdir -p /usr/local/oresty/site/ && cp -r ./lualib/ /usr/local/oresty/site/
 

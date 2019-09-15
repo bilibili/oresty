@@ -2,7 +2,6 @@ local client = require 'lib.client'
 local cjson = require 'cjson.safe'
 local serpent = require 'serpent'
 local config = require 'config.config'
-local redis_retry = require 'lib.redis_retry'
 local template = require 'resty.template'
 
 local _M = {}

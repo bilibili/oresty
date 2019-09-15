@@ -1,21 +1,21 @@
 # apt install -y autoconf libreadline-dev libncurses5-dev libpcre3-dev libssl-dev make
-wget http://bvcstatic.acgvideo.com/openresty-1.13.6.2.tar.gz -O /tmp/openresty-1.13.6.2.tar.gz
-rm -rf /tmp/openresty-1.13.6.2
-tar xvf /tmp/openresty-1.13.6.2.tar.gz -C /tmp/
-cd /tmp/openresty-1.13.6.2
+wget https://openresty.org/download/openresty-1.15.8.1.tar.gz -O /tmp/openresty-1.15.8.1.tar.gz
+rm -rf /tmp/openresty-1.15.8.1
+tar xvf /tmp/openresty-1.15.8.1.tar.gz -C /tmp/
+cd /tmp/openresty-1.15.8.1
 echo '
 3928c3928,3929
 <                 if (u->headers_in.status_n == NGX_HTTP_OK
 ---
 >                 if ((u->headers_in.status_n == NGX_HTTP_OK
 >                         || u->headers_in.status_n == NGX_HTTP_PARTIAL_CONTENT)
-' |patch ./bundle/nginx-1.13.6/src/http/ngx_http_upstream.c
+' |patch ./bundle/nginx-1.15.8/src/http/ngx_http_upstream.c
 echo '
 92c92
 <     p = ngx_cpystrn((u_char *) ngx_os_argv[0], (u_char *) "nginx: ",
 ---
 >     p = ngx_cpystrn((u_char *) ngx_os_argv[0], (u_char *) "oresty: ",
-' |patch ./bundle/nginx-1.13.6/src/os/unix/ngx_setproctitle.c
+' |patch ./bundle/nginx-1.15.8/src/os/unix/ngx_setproctitle.c
 echo '
 3708a3709,3718
 >     ngx_str_t name = ngx_string("reqid");
@@ -28,7 +28,7 @@ echo '
 >     }
 >     buf= ngx_snprintf(buf, len, ", reqid: %V", &reqid);
 >     
-' |patch ./bundle/nginx-1.13.6/src/http/ngx_http_request.c
+' |patch ./bundle/nginx-1.15.8/src/http/ngx_http_request.c
 ./configure \
     --prefix=/usr/local/oresty \
     --http-fastcgi-temp-path=/tmp/fastcgi_temp \

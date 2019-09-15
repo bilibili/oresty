@@ -9,11 +9,9 @@ function _M.get(params)
     -- local ret = client.get('http://example.com')
     -- local body = ret.body
 
-    local redis_host = config.redis_host
-
     template.render('view.html', {
         time = os.date("%Y-%m-%d_%H:%M:%S", ngx.time()),
-        redis_host = redis_host,
+        redis_host = config.redis.host,
         message = 'Hello, World!',
         arr = {
             key1 = 'val1',
