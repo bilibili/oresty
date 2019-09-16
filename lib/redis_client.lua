@@ -18,7 +18,6 @@ function _M.new(conf)
                     if conf.serv_list then
                         local red = redis_cluster:new(conf)
                         repeat
-                            ret = red:connect(conf.host or '127.0.0.1', conf.port or 6379)
                             if ret then
                                 ret, err = red[_.method](red, ...)
                                 if ret then
