@@ -27,7 +27,10 @@ oresty
 
 ## lib/tlcache.lua
 
-缓存库，设计理念源于lua-resty-mlcache
+- 缓存库，设计理念源于lua-resty-mlcache
+- 区别在于可以再配置一层mongo或者redis实现多主机共享缓存
+- 相对于mlcache的两层缓存（L1-upvalue，L2-shdict），tlcache是三级缓存
+- TODO: 第三级缓存支持锁，避免多主机并发场景下的多次初始化
 
     --
     -- 现在site.conf 里面添加lua_shared_dict配置
@@ -152,8 +155,12 @@ http://docs.guzzlephp.org/
     --
     -- deal with output
     --
-    
-## Changelist
+
+## Changelog
+
+### 20190928 
+- 更新README，添加client,stat,tlcache的使用说明
+- 添加tlcache
 
 ### 20190915 
 - 升级OpenResty到1.15
