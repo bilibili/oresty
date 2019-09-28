@@ -32,25 +32,26 @@ oresty
 - 相对于mlcache的两层缓存（L1-upvalue，L2-shdict），tlcache是三级缓存
 - TODO: 第三级缓存支持锁，避免多主机并发场景下的多次初始化
 
+```
+--
+-- 现在site.conf 里面添加lua_shared_dict配置
+--
+lua_shared_dict tlcache 100m;
 
-    --
-    -- 现在site.conf 里面添加lua_shared_dict配置
-    --
-    lua_shared_dict tlcache 100m;
-
-    local tlcache = require 'lib.tlcache'
-    local cache1 = tlcache.new('cache1', 'tlcache', {
-        ttl = 10,
-        neg_ttl = 10,
-        mongo_config = {}
-        redis_config = {}
-    })
-    while 1 do
-        cache1:get('key1', {ttl = 10, neg_ttl}, function()
-            ngx.say(ngx.ERR, ngx.time())
-        end)
-        ngx.sleep(1)
-    end
+local tlcache = require 'lib.tlcache'
+local cache1 = tlcache.new('cache1', 'tlcache', {
+    ttl = 10,
+    neg_ttl = 10,
+    mongo_config = {}
+    redis_config = {}
+})
+while 1 do
+    cache1:get('key1', {ttl = 10, neg_ttl}, function()
+        ngx.say(ngx.ERR, ngx.time())
+    end)
+    ngx.sleep(1)
+end
+```
 
 ## lib/stat.lua
 
