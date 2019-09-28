@@ -32,6 +32,7 @@ oresty
 - 相对于mlcache的两层缓存（L1-upvalue，L2-shdict），tlcache是三级缓存
 - TODO: 第三级缓存支持锁，避免多主机并发场景下的多次初始化
 
+
     --
     -- 现在site.conf 里面添加lua_shared_dict配置
     --
