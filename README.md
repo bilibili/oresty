@@ -164,6 +164,11 @@ http://docs.guzzlephp.org/
 
 ## Changelog
 
+### 20190929
+- 更新安装方式，安装文档
+- 添加select2.js
+- 添加lib/mysql_client
+
 ### 20190928 
 - 更新README，添加client,stat,tlcache的使用说明
 - 添加tlcache
