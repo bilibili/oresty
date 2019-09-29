@@ -12,18 +12,22 @@ oresty
 
 ## Usage
 
+    #
+    # 安装deb包，初始化应用环境
+    #
+    dpkg -i install.deb
     bash check-env.sh
 
-    ln -s config_dev config
-
-    install oresty /etc/init.d/oresty
-
+    #
+    # 启动程序，检测进程状况
+    #
     /etc/init.d/oresty start
-
     ps aux|grep oresty
 
-    iresty/lua-resty-etcd: Nonblocking Lua etcd driver library for OpenResty
-    https://github.com/iresty/lua-resty-etcd
+    #
+    # 浏览器打开
+    #
+    http://127.0.0.1:2223
 
 ## lib/tlcache.lua
 

@@ -1,11 +1,14 @@
 #!/bin/bash
 set -e
 
-dpkg -i ./oresty_1.15.8.1-20190915154915_amd64.deb
+test -e config || ln -s config_${1:-dev} config
 
-mkdir -p /usr/local/oresty/site/ && cp -r ./lualib/ /usr/local/oresty/site/
+dpkg -i ./install.deb
 
-name=${1:-oresty}
-sed "s@_APP_DIR_@$PWD@;s@_NAME_@$name@" oresty.template > $name
+NAME=${1:-oresty}
+
+mkdir -p /usr/local/${NAME}/site/ && cp -r ./lualib/ /usr/local/${NAME}/site/
+
+install <(sed "s@_APP_DIR_@$PWD@;s@_NAME_@$name@" init.template) /etc/init.d/${NAME}
 
 echo OK
