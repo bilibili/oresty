@@ -24,8 +24,32 @@ local _M = {
     PHP_URL_QUERY = 6,
     PHP_URL_FRAGMENT = 7,
     FILE_APPEND = 'a+',
+    FILTER_VALIDATE_IP = 8,
+    FILTER_VALIDATE_URL = 9,
 }
 
+--
+-- PHP: filter_var - Manual
+-- http://php.net/manual/zh/function.filter-var.php
+--
+function _M.filter_var(variable, filter)
+    if _M.empty(variable) then
+        return false
+    elseif filter == _M.FILTER_VALIDATE_IP then
+        return ngx.re.match(variable, [[^\d{1,3}(\.\d{1,3}){3}$]], 'jo') and true
+    elseif filter == _M.FILTER_VALIDATE_URL then
+        return ngx.re.match(variable, [[^(?:(\w+):)?//([^:/\?]+)(?::(\d+))?([^\?]*)\??(.*)]], "jo") and true
+    end
+    return false
+end
+
+--
+-- PHP: empty - Manual
+-- http://php.net/manual/zh/function.empty.php
+--
+function _M.empty(v)
+    return not v or v == '' or v == 0
+end
 function _M.var_dump(expression)
     print(serpent.block(expression))
 end
