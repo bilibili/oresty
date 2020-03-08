@@ -216,9 +216,22 @@ http://docs.guzzlephp.org/
 
 ## 竞品Alternatives
 
-## 引用Reference
+- sumory/lor: a fast, minimalist web framework for lua based on OpenResty
+https://github.com/sumory/lor
 
-## 灵感InspiredBy
+- leafo/lapis: A web framework for Lua and OpenResty written in MoonScript
+https://github.com/leafo/lapis
+
+
+## 引用Reference
+- 序 · OpenResty最佳实践
+https://moonbingbing.gitbooks.io/openresty-best-practices/
+
+- bungle/awesome-resty: A List of Quality OpenResty Libraries, and Resources.
+https://github.com/bungle/awesome-resty
+
+- apache/incubator-apisix: Cloud-Native Microservices API Gateway
+https://github.com/apache/incubator-apisix
 
 ## Changelog
 
