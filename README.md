@@ -223,6 +223,13 @@ http://docs.guzzlephp.org/
 ## Changelog
 
 ### 20190929
+- 优化文档
+- 添加prometheus.lua
+- 添加sentry.lua
+- 增加OpenResty1.17rc版本
+- 增加支持lua-resty-shell非阻塞执行本地命令
+
+### 20190929
 - 更新安装方式，安装文档
 - 添加select2.js
 - 添加lib/mysql_client
