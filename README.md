@@ -235,7 +235,7 @@ https://github.com/apache/incubator-apisix
 
 ## Changelog
 
-### 20190929
+### 20200308
 - 优化文档
 - 添加prometheus.lua
 - 添加sentry.lua
