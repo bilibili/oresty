@@ -1,16 +1,16 @@
 # Oresty
 
-基于openresty的web框架
+基于OpenResty的web应用框架，旨在推广OpenResty在web应用领域的应用
 - 支持异步任务，异步IO
-- 比go性能好，比PHP入门简单
+- 比Go性能好，比PHP入门简单
 
-## Benchmark
+## Benchmark - 基准测试
 
-go
-php
-oresty
+- Go
+- PHP
+- Oresty
 
-## Usage
+## Quick Start - 快速开始
 
     #
     # 安装deb包，初始化应用环境
@@ -29,8 +29,31 @@ oresty
     #
     http://127.0.0.1:2223
 
-## lib/tlcache.lua
+## OpenResty目录结构
 
+    ./oresty/bin
+    ./oresty/lualib
+    ./oresty/luajit
+    ./oresty/nginx
+    ./oresty/site
+    ./oresty/pod
+    ./oresty/
+
+## Sentry - raven.lua
+
+## lib/route.lua
+
+## resty命令行
+    便捷的执行带参数的resty命令的技巧
+
+    #!/usr/local/bin/env -S /usr/local/oresty/bin/resty --shdict 'prometheus_metrics 2M' -I ./lualib/
+
+## lib/tlcache.lua Oresty独有的库，基于mlcache和lrucache
+
+- lib/lrucache.lua OpenResty内置
+    通过upvalue实现缓存
+
+- lib/mlcache.lua 优质的第三方库
 - 缓存库，设计理念源于lua-resty-mlcache
 - 区别在于可以再配置一层mongo或者redis实现多主机共享缓存
 - 相对于mlcache的两层缓存（L1-upvalue，L2-shdict），tlcache是三级缓存
@@ -99,14 +122,34 @@ end
 
     用lua实现swoole，task-workers和request-workers隔离
 
+## 错误栈
+
 ## lib/cors.lua
 
 ## lib/redis_clinet.lua
 
-## lib/mongo_clinet.lua
+    local redis_client = require 'lib.redis_client'
+    local red = redis_client.new()
+    local ret = red:set()
+    local red:get()
+
+## lib/mongo_client.lua
+
+    local mongo_client = require 'lib.mongo_client'
+    local mdb = mongo_client.new()
+    mdb:get()
+    mdb:set()
 
 ## lib/mysql_clinet.lua
 
+    local mongo_client = require 'lib.mongo_client'
+    local mdb = mongo_client.new()
+    mdb:get()
+    mdb:set()
+
+## 使用prometheus
+knyar/nginx-lua-prometheus: Prometheus metric library for Nginx written in Lua
+https://github.com/knyar/nginx-lua-prometheus
 
 ## lup.lua
 
@@ -170,6 +213,12 @@ http://docs.guzzlephp.org/
     --
     -- deal with output
     --
+
+## 竞品Alternatives
+
+## 引用Reference
+
+## 灵感InspiredBy
 
 ## Changelog
 

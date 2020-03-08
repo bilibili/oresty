@@ -3,9 +3,11 @@
 -- Date : 2017/12/20
 --
 
+rawset(_G, 'lfs', false)
 local lfs = require 'lfs'
 local serpent = require 'serpent'
 local cjson = require 'cjson.safe'
+local shell = require 'resty.shell'
 
 --
 -- constants
@@ -174,6 +176,45 @@ function _M.exec(cmd)
     }
 end
 
+--
+-- PHP: exec158 - Manual
+-- http://php.net/manual/en/function.exec.php
+--
+function _M.exec158(cmd, stdin, timeout, max_size)
+    max_size = max_size or 2^52
+    local ret, stdout, stderr, reason, status =
+        shell.run(cmd, stdin, timeout, max_size)
+
+    ngx.log(ngx.INFO,
+        ' ret: ', ret,
+        ' cmd: ', cmd,
+        ' stdout: ', stdout,
+        ' stderr: ', stderr,
+        ' reason: ', reason,
+        ' status: ', status
+    )
+
+    if ret then
+        return stdout
+    end
+    if type(stderr) == 'string' and #stderr > 900 * 1024 then
+        stderr = string.sub(stderr, 1, 900 * 1024)
+    end
+
+    error({
+        ret = ret,
+        stdout = stdout,
+        stderr = stderr,
+        reason = reason,
+        status = status,
+    })
+end
+
+
+--
+-- PHP: unlink - Manual
+-- http://php.net/manual/zh/function.unlink.php
+--
 function _M.unlink(path)
     return os.remove(path)
 end
