@@ -8,15 +8,18 @@ local config = require 'config.config'
 
 local r = route.new('/home/tjx/oresty/ctrl/', config.debug)
 
-local params = lup._REQUEST()
+return function()
 
-local ctrl = params.r or lup.basename(ngx.var.document_uri)
+    local params = lup._REQUEST()
 
-if lup.empty(ctrl) then
-    ctrl = 'test'
+    local ctrl = params.r or lup.basename(ngx.var.document_uri)
+
+    if lup.empty(ctrl) then
+        ctrl = 'test'
+    end
+
+    local method = params.method or ngx.req.get_method():lower()
+
+    r:dispatch(ctrl, method, params)
+
 end
-
-local method = params.method or ngx.req.get_method():lower()
-
-r:dispatch(ctrl, method, params)
-
