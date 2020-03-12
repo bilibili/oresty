@@ -15,7 +15,7 @@ return function()
     local ctrl = params.r or lup.basename(ngx.var.document_uri)
 
     if lup.empty(ctrl) then
-        ctrl = 'test'
+        ctrl = 'home'
     end
 
     local method = params.method or ngx.req.get_method():lower()
