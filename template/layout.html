@@ -7,13 +7,15 @@
     <meta name=viewport content="width=device-width, initial-scale=1">
     <title>Oresty</title>
     <script src="//cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
-    <link href="//use.fontawesome.com/releases/v5.0.8/css/all.css" rel="stylesheet">
+    <link href="//cdn.staticfile.org/font-awesome/5.10.2/css/all.min.css" rel="stylesheet">
     <link href="//bvcstatic.acgvideo.com/dstyle.css" rel="stylesheet">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
   </head>
 
   <nav>
     <ul>
-      <li> <a class="fa fa-cloud-upload-alt fa-2x"></a><a class=brand disabled href="#">Oresty</a></li>
+      <li> <a class=brand disabled href="#">Oresty</a></li>
       <li> <a href="?r=home">Home</a></li>
     </ul>
   </nav>
@@ -23,5 +25,11 @@
         {*view*}
     </main>
   </body>
+  <script>
+      $(document).ready(function() {
+          $('select').select2();
+      });
+  </script>
+
 
 </html>

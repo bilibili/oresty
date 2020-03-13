@@ -1,13 +1,17 @@
+--
+-- tjx@20200308
+--
+
 local client = require 'lib.client'
 local config = require 'config.config'
-local redis_retry = require 'lib.redis_retry'
+local redis_client = require 'lib.redis_client'
 local template = require 'resty.template'
 
 local _M = {}
 
 function _M.get(params)
 
-    local red = redis_retry.new(config.redis_host, config.redis_port)
+    local red = redis_client.new(config.redis)
     local ret = ''
 
     if params.val then

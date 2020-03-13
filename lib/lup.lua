@@ -3,9 +3,11 @@
 -- Date : 2017/12/20
 --
 
+rawset(_G, 'lfs', false)
 local lfs = require 'lfs'
 local serpent = require 'serpent'
 local cjson = require 'cjson.safe'
+local shell = require 'resty.shell'
 
 --
 -- constants
@@ -24,8 +26,32 @@ local _M = {
     PHP_URL_QUERY = 6,
     PHP_URL_FRAGMENT = 7,
     FILE_APPEND = 'a+',
+    FILTER_VALIDATE_IP = 8,
+    FILTER_VALIDATE_URL = 9,
 }
 
+--
+-- PHP: filter_var - Manual
+-- http://php.net/manual/zh/function.filter-var.php
+--
+function _M.filter_var(variable, filter)
+    if _M.empty(variable) then
+        return false
+    elseif filter == _M.FILTER_VALIDATE_IP then
+        return ngx.re.match(variable, [[^\d{1,3}(\.\d{1,3}){3}$]], 'jo') and true
+    elseif filter == _M.FILTER_VALIDATE_URL then
+        return ngx.re.match(variable, [[^(?:(\w+):)?//([^:/\?]+)(?::(\d+))?([^\?]*)\??(.*)]], "jo") and true
+    end
+    return false
+end
+
+--
+-- PHP: empty - Manual
+-- http://php.net/manual/zh/function.empty.php
+--
+function _M.empty(v)
+    return not v or v == '' or v == 0
+end
 function _M.var_dump(expression)
     print(serpent.block(expression))
 end
@@ -83,7 +109,7 @@ function _M.a(f, ...)
     if status then
         return ret
     end
-    ngx.log(ngx.ERR, ret)
+    ngx.log(ngx.ERR, serpent.line(ret))
     return nil
 end
 
@@ -112,6 +138,14 @@ function _M._REQUEST()
     return params
 end
 
+--
+-- PHP: trim - Manual
+-- http://php.net/manual/zh/function.trim.php
+--
+function _M.trim(str, character_mask)
+    character_mask = character_mask or '%s'
+    return str:match('^'..character_mask..'*(.*)'):match('(.-)'..character_mask..'*$')
+end
 function _M.hex2bin(data)
     return ((data or ''):gsub('..', function (cc)
         return string.char(tonumber(cc, 16) or 0)
@@ -150,6 +184,45 @@ function _M.exec(cmd)
     }
 end
 
+--
+-- PHP: exec158 - Manual
+-- http://php.net/manual/en/function.exec.php
+--
+function _M.exec158(cmd, stdin, timeout, max_size)
+    max_size = max_size or 2^52
+    local ret, stdout, stderr, reason, status =
+        shell.run(cmd, stdin, timeout, max_size)
+
+    ngx.log(ngx.INFO,
+        ' ret: ', ret,
+        ' cmd: ', cmd,
+        ' stdout: ', stdout,
+        ' stderr: ', stderr,
+        ' reason: ', reason,
+        ' status: ', status
+    )
+
+    if ret then
+        return stdout
+    end
+    if type(stderr) == 'string' and #stderr > 900 * 1024 then
+        stderr = string.sub(stderr, 1, 900 * 1024)
+    end
+
+    error({
+        ret = ret,
+        stdout = stdout,
+        stderr = stderr,
+        reason = reason,
+        status = status,
+    })
+end
+
+
+--
+-- PHP: unlink - Manual
+-- http://php.net/manual/zh/function.unlink.php
+--
 function _M.unlink(path)
     return os.remove(path)
 end

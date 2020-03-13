@@ -12,10 +12,10 @@ params = {
     cors = {
         {
             origins = {
-                'http://*.bilibili.co',
-                'https://*.bilibili.co',
-                'http://*.bilibili.com',
-                'https://*.bilibili.com',
+                'http://*.baidu.co',
+                'https://*.baidu.co',
+                'http://*.baidu.com',
+                'https://*.baidu.com',
             },
             methods = {
                 'DELETE', 
