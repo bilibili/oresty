@@ -22,6 +22,7 @@
     * [引用Reference](#引用reference)
     * [Changelog](#changelog)
         * [20200310](#20200310)
+        * [20200310](#20200310-1)
         * [20200308](#20200308)
         * [20190929](#20190929)
         * [20190928](#20190928)
@@ -265,6 +266,10 @@ https://github.com/bungle/awesome-resty
 https://github.com/apache/incubator-apisix
 
 ## Changelog
+
+### 20200310
+- 升级lib/route.lua
+- 弃用init，启用systemd作为进程管理
 
 ### 20200310
 - 添加prom.lua, zset.lua

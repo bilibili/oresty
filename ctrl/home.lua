@@ -4,7 +4,6 @@
 
 local client = require 'lib.client'
 local config = require 'config.config'
-local template = require 'resty.template'
 
 local _M = {}
 
@@ -13,7 +12,7 @@ function _M.get(params)
     -- local ret = client.get('http://example.com')
     -- local body = ret.body
 
-    template.render('view.html', {
+    return {
         time = os.date("%Y-%m-%d_%H:%M:%S", ngx.time()),
         redis_host = config.redis.host,
         message = 'Hello, World!',
@@ -22,9 +21,8 @@ function _M.get(params)
             key2 = 'val2',
             key3 = 'val3',
         }
-    })
+    }, 'template/view.html'
 
-    return ''
 end
 
 return _M
