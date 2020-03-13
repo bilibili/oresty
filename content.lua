@@ -11,7 +11,7 @@ return function()
 
     local params = lup._REQUEST()
 
-    local ctrl = params.r or lup.basename(ngx.var.document_uri)
+    local ctrl = params.r or lup.basename(lup.trim(ngx.var.document_uri, '/'))
 
     if lup.empty(ctrl) then
         ctrl = 'home'
