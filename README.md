@@ -174,10 +174,9 @@ end
 
 ## lib/mysql_clinet.lua
 
-    local mongo_client = require 'lib.mongo_client'
-    local mdb = mongo_client.new()
-    mdb:get()
-    mdb:set()
+    local mysql_client = require 'lib.mysql_client'
+    local db = mysql_client.new()
+    local res = db:query('select * from test.a_table;')
 
 ## 使用prometheus
 knyar/nginx-lua-prometheus: Prometheus metric library for Nginx written in Lua
