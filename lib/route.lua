@@ -1,59 +1,77 @@
 --
--- User: tangjunxing
--- Date : 2017/08/31
+-- tjx@20200313
+--
+-- Usage:
+-- 
+--     local rt = route.new()
+--     rt:dispatch(nil, 'home', 'get', {
+--         a = b,
+--         c = d
+--     })
+--
+--     or self defined route dirs
+--
+--     local rt = route.new({'./ctrl/', 'ctrl1'})
+--     rt:dispatch('ctrl', 'home', 'get', {
+--         a = b,
+--         c = d
+--     })
+--     rt:dispatch('ctrl1', 'home1', 'get', {
+--         a = b,
+--         c = d
+--     })
 --
 
 local lup = require 'lib.lup'
 local serpent = require 'serpent'
 local template = require 'resty.template'
-local lup = require 'lib.lup'
 local lfs = require 'lfs'
 
 local _M = {
-    version = 190924
+    version = 20200313
 }
 
 local inited = false
 local loaded = {}
-function _M.new(dir, debug)
-    if not inited then
-        ngx.log(ngx.ERR, 'DIR: ', dir)
-        for file in lfs.dir(dir) do
-            local pathinfo = lup.pathinfo(file)
-            if 'lua' == pathinfo.extension then
-                local filename = pathinfo.filename
-                ngx.log(ngx.ERR, 'filename: ', filename)
-                loaded[filename] = require('ctrl.'..filename)
+function _M.new(dirs)
+    local dirs = dirs or {'./ctrl/'}
+    for _, dir in ipairs(dirs) do
+        local dirname = lup.basename(lup.trim(dir, '/'))
+        if not inited then
+            for file in lfs.dir(dir) do
+                local pathinfo = lup.pathinfo(file)
+                if 'lua' == pathinfo.extension then
+                    local filename = pathinfo.filename
+                    loaded[dirname..'/'..filename] = require(dir..'/'..filename)
+                    ngx.log(ngx.ERR, 
+                    dirname..'/'..filename..' => '..dir..'/'..filename
+                    )
+                end
             end
         end
-        inited = true
     end
-    local self = {}
-    return setmetatable({debug = debug}, {__index = _M})
+    inited = true
+    return setmetatable({}, {__index = _M})
 end
 
-function _M.dispatch(self, route, method, params)
+function _M.dispatch(self, dirname, route, method, params)
+
+    dirname = dirname or 'ctrl'
+    assert(route, 'ROUTE_NIL')
 
     --
     -- 调用方法，并且渲染输出
     --
     local ok, ret = xpcall(function()
-
-        local ctrl = loaded[route or '']
+        assert(route, 'ROUTE_NIL')
+        local ctrl = loaded[dirname..'/'..route]
         if not ctrl then
             ngx.status = 404
-            error('CTRL_NOT_FOUND')
+            error('CTRL_NOT_FOUND_'..dirname..'/'..route)
         elseif not ctrl[method] then
             ngx.status = 404
             error('METHOD_NOT_FOUND')
         end
-
-        lup.var_dump({
-            route = route,
-            method = method,
-            params = params,
-        })
-
         local ret, template_path = ctrl[method](params)
         if template_path then
             template.render(template_path, ret)
@@ -65,14 +83,15 @@ function _M.dispatch(self, route, method, params)
             ngx.print(ret)
         elseif ret == nil then
         else
-            error('UNKNOWN_RET_CONTENT_TYPE')
+            error('ROUTE_UNKNOWN_RET_TYPE')
         end
     end,
     function(err)
-        return {
+        ngx.log(ngx.ERR, serpent.line({
             err = err,
-            traceback = debug.traceback()
-        }
+            traceback = debug.traceback(),
+        }, {comment = false}))
+        return err
     end)
 
     --
@@ -82,20 +101,11 @@ function _M.dispatch(self, route, method, params)
         if ngx.status == 0 then
             ngx.status = 500
         end
-        ret = ret or {}
-        ngx.log(ngx.ERR, serpent.line({
-            status = ngx.status,
-            err = ret.err,
-            traceback = ret.traceback,
-        }, {comment = false}))
         ngx.say(lup.json_encode({
             params = params,
-            r = r,
-            title = 'exception',
             http_code = ngx.status,
             reqid = ngx.var.http_x_upos_reqid,
-            error = ret.err,
-            traceback = self.debug and lup.explode('\n\t', ret.traceback or '') or nil,
+            err = ret,
         }))
     end
 

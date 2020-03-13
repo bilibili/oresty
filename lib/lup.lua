@@ -138,6 +138,14 @@ function _M._REQUEST()
     return params
 end
 
+--
+-- PHP: trim - Manual
+-- http://php.net/manual/zh/function.trim.php
+--
+function _M.trim(str, character_mask)
+    character_mask = character_mask or '%s'
+    return str:match('^'..character_mask..'*(.*)'):match('(.-)'..character_mask..'*$')
+end
 function _M.hex2bin(data)
     return ((data or ''):gsub('..', function (cc)
         return string.char(tonumber(cc, 16) or 0)
