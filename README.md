@@ -36,6 +36,7 @@
 基于OpenResty的web应用框架，旨在推广OpenResty在web应用领域的应用
 - 支持异步任务，异步IO
 - 比Go性能好，比PHP入门简单
+- Demo: http://tjx.be/
 
 ## Benchmark - 基准测试
 
