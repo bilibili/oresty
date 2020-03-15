@@ -7,7 +7,7 @@ rawset(_G, 'lfs', false)
 local lfs = require 'lfs'
 local serpent = require 'serpent'
 local cjson = require 'cjson.safe'
-local shell = require 'resty.shell'
+local _, shell = pcall(require, 'resty.shell')
 
 --
 -- constants
@@ -160,47 +160,39 @@ function _M.json_decode(str)
     return cjson.decode(str)
 end
 
-function _M.exec(cmd)
-    local tmpout = os.tmpname()
-    local tmperr = os.tmpname()
-    local ret = os.execute('('..cmd..') >'..tmpout..' 2>'..tmperr)
-    local stdout = _M.file_get_contents(tmpout)
-    os.remove(tmpout)
-    local stderr = _M.file_get_contents(tmperr)
-    os.remove(tmperr)
-    ngx.log(ngx.INFO,
-        ' cmd: ', cmd,
-        ' ret: ', ret,
-        ' stderr: ', stderr,
-        ' stdout: ', stdout
-    )
-    if ret then
-        return stdout
-    end
-    return nil, cjson.encode{
-        ret = ret,
-        stdout = stdout,
-        stderr = stderr
-    }
-end
-
 --
--- PHP: exec158 - Manual
+-- PHP: exec - Manual
 -- http://php.net/manual/en/function.exec.php
 --
-function _M.exec158(cmd, stdin, timeout, max_size)
-    max_size = max_size or 2^52
-    local ret, stdout, stderr, reason, status =
-        shell.run(cmd, stdin, timeout, max_size)
+function _M.exec(cmd)
 
-    ngx.log(ngx.INFO,
+    local ret, stdout, stderr, reason, status
+
+    if shell and shell.run then
+        ret, stdout, stderr, reason, status = shell.run(cmd, nil, nil, 2^52)
+        ngx.log(ngx.INFO,
         ' ret: ', ret,
         ' cmd: ', cmd,
         ' stdout: ', stdout,
         ' stderr: ', stderr,
         ' reason: ', reason,
         ' status: ', status
-    )
+        )
+    else
+        local tmpout = os.tmpname()
+        local tmperr = os.tmpname()
+        ret = os.execute('('..cmd..') >'..tmpout..' 2>'..tmperr)
+        stdout = _M.file_get_contents(tmpout)
+        os.remove(tmpout)
+        stderr = _M.file_get_contents(tmperr)
+        os.remove(tmperr)
+        ngx.log(ngx.INFO,
+        ' cmd: ', cmd,
+        ' ret: ', ret,
+        ' stderr: ', stderr,
+        ' stdout: ', stdout
+        )
+    end
 
     if ret then
         return stdout

@@ -8,6 +8,7 @@
     * [lib/route.lua](#libroutelua)
     * [resty命令行](#resty命令行)
     * [lib/tlcache.lua Oresty独有的库，基于mlcache和lrucache](#libtlcachelua-oresty独有的库基于mlcache和lrucache)
+    * [lib/prom.lua](#libpromlua)
     * [lib/stat.lua](#libstatlua)
     * [lib/swoole.lua](#libswoolelua)
     * [错误栈](#错误栈)
@@ -53,8 +54,8 @@
     #
     # 启动程序，检测进程状况
     #
-    /etc/init.d/oresty start
-    ps aux|grep oresty
+    systemctl start oresy
+    systemctl status oresy
 
     #
     # 浏览器打开
@@ -111,6 +112,9 @@ while 1 do
     ngx.sleep(1)
 end
 ```
+
+## lib/prom.lua
+统计库，支持Prometheus格式输出
 
 ## lib/stat.lua
 

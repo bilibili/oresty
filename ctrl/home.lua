@@ -3,6 +3,7 @@
 --
 
 local client = require 'lib.client'
+local lup = require 'lib.lup'
 local config = require 'config.config'
 
 local _M = {}
@@ -21,7 +22,7 @@ function _M.get(params)
             key2 = 'val2',
             key3 = 'val3',
         }
-    }, 'template/view.html'
+    }, 'template/home.html'
 
 end
 

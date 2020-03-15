@@ -5,7 +5,7 @@
 
 test "$UID" -eq 0 || exec sudo "$0" "$@"
 
-service oresty reload
+systemctl reload oresty
 
-service oresty status
+systemctl status oresty
 

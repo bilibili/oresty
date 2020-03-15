@@ -1,16 +1,10 @@
-[Unit]
-Description=_NAME_
- 
+
 [Service]
 User=root
-WorkingDirectory=_APP_DIR_
-ExecStart=/bin/sh -c "/usr/local/oresty/nginx/sbin/nginx -p /home/tjx/oresty/nginx -g 'daemon off;' 2>&1 >> _APP_DIR_/nginx/logs/stderr.log"
-ExecReload=/usr/local/oresty/nginx/sbin/nginx -p /home/tjx/oresty/nginx -s reload
-ExecStop=/usr/local/oresty/nginx/sbin/nginx -p /home/tjx/oresty/nginx -s stop
-StandardOutput=syslog
-StandardError=inherit
-Restart=always
-RestartSec=1s
- 
+WorkingDirectory=/home/tjx/oresty
+ExecStart=/usr/local/oresty/nginx/sbin/nginx -c /home/tjx/oresty/nginx.conf -g 'daemon off;'
+ExecReload=/usr/local/oresty/nginx/sbin/nginx -c /home/tjx/oresty/nginx.conf -s reload
+ExecStop=/usr/local/oresty/nginx/sbin/nginx -c /home/tjx/oresty/nginx.conf -s stop
 [Install]
 WantedBy=default.target
+
