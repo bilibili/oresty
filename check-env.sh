@@ -27,7 +27,6 @@ systemctl enable $(realpath oresty.service)
 test -e .git && {
     test -e .git/hooks/pre-commit || {
         echo '#!/bin/sh
-find -name "*.lua" |grep -v /init/| xargs -n1 luajit -bl >/dev/null || exit 1
 echo v$(git log master --pretty=oneline | wc -l)-$(date +%Y%m%d) > version
 git add version' > .git/hooks/pre-commit
         chmod +x .git/hooks/pre-commit
